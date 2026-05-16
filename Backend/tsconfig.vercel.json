@@ -3,11 +3,12 @@
     "lib": ["ES2022"],
     "target": "ES2022",
     "module": "ES2022",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "outDir": "./dist",
     "rootDir": "./",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": false,
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -21,6 +22,13 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false
   },
-  "include": ["index.ts", "db.ts", "middleware.ts", "client.ts", "promt.ts"],
-  "exclude": ["node_modules", "dist", "test-*.ts", "prisma/generated"]
+  "include": [
+    "index.ts",
+    "db.ts",
+    "middleware.ts",
+    "client.ts",
+    "promt.ts",
+    "prisma/generated/**/*.ts"
+  ],
+  "exclude": ["node_modules", "dist", "test-*.ts"]
 }
