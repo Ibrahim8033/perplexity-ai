@@ -15,6 +15,7 @@ const app = express();
 app.use(express.json());
 const allowedOrigins = [
   "http://localhost:3000",
+  "https://perplexity-ai-oauv.vercel.app",
   "http://localhost:3001",
   "http://localhost:8000",
   process.env.FRONTEND_URL,
