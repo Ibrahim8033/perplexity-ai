@@ -13,8 +13,15 @@ const client = tavily({ apiKey: process.env.TAVILY_API_KEY });
 const app = express();
 
 app.use(express.json());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:8000",
+  process.env.FRONTEND_URL,
+].filter(Boolean) as string[];
+
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:8000"],
+  origin: allowedOrigins,
   allowedHeaders: ["Authorization", "Content-Type"],
   credentials: true,
 }));
@@ -55,7 +62,7 @@ app.get("/health", (req, res) => {
 // ─── GET /conversation/:slug ─────────────────────────────────────────
 app.get("/conversation/:slug", middleware, async (req, res) => {
   try {
-    const { slug } = req.params;
+    const slug = req.params.slug as string;
     const userId = req.userId!;
 
     const conversation = await prisma.conversation.findFirst({
@@ -82,7 +89,7 @@ app.get("/conversation/:slug", middleware, async (req, res) => {
 // ─── DELETE /conversation/:id ────────────────────────────────────────
 app.delete("/conversation/:id", middleware, async (req, res) => {
   try {
-    const conversationId = req.params.id;
+    const conversationId = req.params.id as string;
     const userId = req.userId!;
 
     console.log(`[DELETE] Looking up conversation: id="${conversationId}", userId="${userId}"`);
@@ -284,6 +291,13 @@ app.post("/Purplexity_ask/followup", middleware, async (req, res) => {
 // STEP3 Stream back the response to the user
 });
 
-app.listen(8000, () => {
-  console.log("[Backend] Server running on http://localhost:8000");
-});
+// Only start listening when running locally (not on Vercel)
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 8000;
+  app.listen(PORT, () => {
+    console.log(`[Backend] Server running on http://localhost:${PORT}`);
+  });
+}
+
+// Export the Express app for Vercel serverless functions
+export default app;
